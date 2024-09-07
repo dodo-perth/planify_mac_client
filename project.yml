@@ -1,0 +1,17 @@
+name: planify_mac_client
+options:
+  bundleIdPrefix: com.yourcompany
+  deploymentTarget:
+    macOS: "11.0"
+targets:
+  planify_mac_client:
+    type: application
+    platform: macOS
+    sources: 
+      - path: planify_mac_client
+    settings:
+      base:
+        INFOPLIST_FILE: planify_mac_client/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourcompany.planify-mac-client
+    entitlements:
+      path: planify_mac_client/planify_mac_client.entitlements
