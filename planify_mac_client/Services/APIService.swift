@@ -30,9 +30,8 @@ class APIService {
             }
             
             do {
-                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let extractedInfo = json["extracted_info"] as? [String: Any] {
-                    completion(.success(extractedInfo))
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    completion(.success(json))
                 } else {
                     completion(.failure(NSError(domain: "Invalid response format", code: 0, userInfo: nil)))
                 }
