@@ -1,5 +1,6 @@
 import Cocoa
 import SwiftUI
+import GoogleSignIn
 
 class PlanifyAppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow?
@@ -14,6 +15,13 @@ class PlanifyAppDelegate: NSObject, NSApplicationDelegate {
         }
         setupStatusBarItem()
         contentViewModel = ContentViewModel()
+
+        // Google Sign-In 설정
+        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+            if let error = error {
+                print("Failed to restore Google Sign-In: \(error.localizedDescription)")
+            }
+        }
     }
 
     func customizeWindow(_ window: NSWindow) {
@@ -50,6 +58,11 @@ class PlanifyAppDelegate: NSObject, NSApplicationDelegate {
 
     func hideAppFromDock() {
         NSApp.setActivationPolicy(.accessory)
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard let url = urls.first else { return }
+        GIDSignIn.sharedInstance.handle(url)
     }
 }
 

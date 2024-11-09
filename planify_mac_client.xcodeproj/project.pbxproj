@@ -15,6 +15,7 @@
 		2FCEBB1FD03386B0AE96A362 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE49C31852E58D76C5D78E46 /* AppState.swift */; };
 		46767C148C99503027925AAC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA4F3F8473775794FFC7A2A2 /* Preview Assets.xcassets */; };
 		49EEADF4B74FDB473ED7EC6A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F93BA35AA2F7B9FD20C /* ContentView.swift */; };
+		5E72E38531E855D13DD6CEEF /* Pods_planify_mac_client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB4B83890FA9292E491F5AFD /* Pods_planify_mac_client.framework */; };
 		8E1B2992C4B3416E989827E5 /* ScreenshotSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7BA37146A0D249AC80E582 /* ScreenshotSelectionView.swift */; };
 		B570865390C553BA32565970 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC75CCCBA2937857B4105455 /* APIService.swift */; };
 		C4EC363C2FDDAA7578B4C17A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F74A6F425AC7D7A311DFBA9 /* MainView.swift */; };
@@ -35,7 +36,9 @@
 		1C4C8F93BA35AA2F7B9FD20C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		30F9ED9BF9268BFD6D11B438 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		3214846E262BB4CC3F46539F /* planify_mac_clientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = planify_mac_clientApp.swift; sourceTree = "<group>"; };
+		35C157E3EF42A94F30ACA5E4 /* Pods-planify_mac_client.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-planify_mac_client.release.xcconfig"; path = "Target Support Files/Pods-planify_mac_client/Pods-planify_mac_client.release.xcconfig"; sourceTree = "<group>"; };
 		4F74A6F425AC7D7A311DFBA9 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		7F14773B26E665BB4A90F456 /* Pods-planify_mac_client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-planify_mac_client.debug.xcconfig"; path = "Target Support Files/Pods-planify_mac_client/Pods-planify_mac_client.debug.xcconfig"; sourceTree = "<group>"; };
 		964A00CF53A552E1ADA0FEFB /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		9A20825F67301017F1AD609B /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		B719BAFD3A0921423579E926 /* planify_mac_client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = planify_mac_client.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +47,7 @@
 		CA4F3F8473775794FFC7A2A2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CA79047769F20FFB591EEB2A /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		F0D56F80C80280985DD7D989 /* PlanFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanFormView.swift; sourceTree = "<group>"; };
+		FB4B83890FA9292E491F5AFD /* Pods_planify_mac_client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_planify_mac_client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC75CCCBA2937857B4105455 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		FE49C31852E58D76C5D78E46 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -55,6 +59,7 @@
 			files = (
 				1B6F1EF32C8BFB5400BFCE22 /* HotKey in Frameworks */,
 				1BEE8AF02C8BFAF3008AB6F3 /* HotKey in Frameworks */,
+				5E72E38531E855D13DD6CEEF /* Pods_planify_mac_client.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				1BEE8AEF2C8BFAF3008AB6F3 /* HotKey */,
+				FB4B83890FA9292E491F5AFD /* Pods_planify_mac_client.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -111,6 +117,16 @@
 				1B1738DB2C8C30E8008823A1 /* WindowManager.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		528CB0F0E614136ACB479E52 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7F14773B26E665BB4A90F456 /* Pods-planify_mac_client.debug.xcconfig */,
+				35C157E3EF42A94F30ACA5E4 /* Pods-planify_mac_client.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		9CDB2A9754FA2F5AD7FA482A /* Preview Content */ = {
@@ -127,6 +143,7 @@
 				09E029BFF01F2ACACE1765B5 /* planify_mac_client */,
 				032B7E1D9E5B35E1F930AD2C /* Products */,
 				1BEE8AED2C8BFA87008AB6F3 /* Frameworks */,
+				528CB0F0E614136ACB479E52 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,9 +190,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3531DD9341E7251BEE451BC5 /* Build configuration list for PBXNativeTarget "planify_mac_client" */;
 			buildPhases = (
+				427A960CB735327B827CC9DC /* [CP] Check Pods Manifest.lock */,
 				CA2027447618FFBBA90C53D3 /* Sources */,
 				033668B562D1D680C79D5FAE /* Resources */,
 				1BEE8AEE2C8BFAE5008AB6F3 /* Frameworks */,
+				C9F97B8677FDBE6BD84680B3 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -211,6 +230,7 @@
 			packageReferences = (
 				1B4DB5222C8BF4180077FBFA /* XCRemoteSwiftPackageReference "HotKey" */,
 			);
+			productRefGroup = 032B7E1D9E5B35E1F930AD2C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -230,6 +250,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		427A960CB735327B827CC9DC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-planify_mac_client-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C9F97B8677FDBE6BD84680B3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-planify_mac_client/Pods-planify_mac_client-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-planify_mac_client/Pods-planify_mac_client-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-planify_mac_client/Pods-planify_mac_client-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CA2027447618FFBBA90C53D3 /* Sources */ = {
@@ -389,6 +451,7 @@
 		};
 		D0DA34E6B32699AB73B8E482 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7F14773B26E665BB4A90F456 /* Pods-planify_mac_client.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = planify_mac_client/planify_mac_client.entitlements;
@@ -415,6 +478,7 @@
 		};
 		E41B23C9B3EB261617ECE8B6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 35C157E3EF42A94F30ACA5E4 /* Pods-planify_mac_client.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = planify_mac_client/planify_mac_client.entitlements;

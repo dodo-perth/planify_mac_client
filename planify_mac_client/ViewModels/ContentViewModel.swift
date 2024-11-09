@@ -1,10 +1,17 @@
 import SwiftUI
-import HotKey
 import Vision
-
 import ScreenCaptureKit
+import Carbon
+import AppKit
+import UserNotifications
+
+// MARK: - Types
+enum ScreenshotType {
+    case full, window, area
+}
 
 class ContentViewModel: NSObject, ObservableObject {
+    // MARK: - Published Properties
     @Published var processedImage: NSImage?
     @Published var isProcessing = false
     @Published var processedText = ""
@@ -16,131 +23,141 @@ class ContentViewModel: NSObject, ObservableObject {
     @Published var isDragging = false
     @Published var isLoadingAPIResponse = false
 
+    @AppStorage("autoSaveCaptures") private var autoSaveCaptures: Bool = false
+
+    // MARK: - Private Properties
+    private var areaScreenshotHotkeyID: UInt32?
+    
+    // MARK: - Services
+    private let screenCapture: ScreenCaptureService
+    private let notification: NotificationService
+    private let storage: StorageService
+    private let hotkey: HotkeyService
+    
+    override init() {
+        self.screenCapture = ScreenCaptureService.shared
+        self.notification = NotificationService.shared
+        self.storage = StorageService.shared
+        self.hotkey = HotkeyManager.shared
+        
+        super.init()
+        setupHotKeys()
+        setupNotifications()
+    }
+    
+    // MARK: - Public Methods
     func startAreaSelection() {
         isSelectingArea = true
     }
-
-    func pasteFromClipboard() {
-        getImageFromPasteboard()
-    }
-    private var areaScreenshotHotKey: HotKey?
     
-    enum ScreenshotType {
-        case full, window, area
+    func takeScreenshot(_ type: ScreenshotType) {
+        Task {
+            do {
+                isProcessing = true
+                switch type {
+                case .area:
+                    if let image = try await screenCapture.captureArea(rect: selectionRect) {
+                        await handleCapturedImage(image)
+                    }
+                case .full, .window:
+                    // Legacy screenshot code
+                    let task = Process()
+                    task.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
+                    task.arguments = type == .full ? ["-c"] : ["-cw"]
+                    
+                    try task.run()
+                    task.waitUntilExit()
+                    if let image = NSImage(pasteboard: .general) {
+                        await handleCapturedImage(image)
+                    }
+                }
+            } catch {
+                await handleError(error)
+            }
+        }
     }
     
-    override init() {
-        super.init()
-        setupHotKeys()
-        requestScreenCaptureAccess()
-    }
-    
+    // MARK: - Private Methods
     private func setupHotKeys() {
-        areaScreenshotHotKey = HotKey(key: .l, modifiers: [.command, .control, .option])
-        areaScreenshotHotKey?.keyDownHandler = { [weak self] in
+        areaScreenshotHotkeyID = hotkey.register(
+            keyCode: kVK_ANSI_L,
+            modifiers: cmdKey | controlKey | optionKey
+        ) { [weak self] in
             self?.takeScreenshot(.area)
         }
     }
     
-    func takeScreenshot(_ type: ScreenshotType) {
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-        
-        switch type {
-        case .full:
-            task.arguments = ["-c"]
-        case .window:
-            task.arguments = ["-cw"]
-        case .area:
-            task.arguments = ["-cis"]  // Interactive, silent mode
-        }
-        
-        do {
-            isProcessing = true
-            try task.run()
-            task.waitUntilExit()
-            getImageFromPasteboard()
-            isProcessing = false
-            
-            if let image = processedImage {
-                performOCR(on: image)
-            }
-        } catch {
-            print("Could not take screenshot: \(error)")
-            isProcessing = false
-        }
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAreaCapture),
+            name: .captureArea,
+            object: nil
+        )
     }
     
-    private func getImageFromPasteboard() {
-        guard NSPasteboard.general.canReadItem(withDataConformingToTypes: NSImage.imageTypes) else { return }
-        guard let image = NSImage(pasteboard: NSPasteboard.general) else { return }
-        self.processedImage = image
+    @objc private func handleAreaCapture() {
+        takeScreenshot(.area)
     }
     
-    func performOCR(on image: NSImage) {
-        isProcessing = true
-        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-            isProcessing = false
-            return
-        }
-
-        let request = VNRecognizeTextRequest { [weak self] request, error in
-            guard let self = self else { return }
-            self.isProcessing = false
-            
-            if let error = error {
-                self.errorMessage = "OCR failed: \(error.localizedDescription)"
-                return
-            }
-            
-            guard let observations = request.results as? [VNRecognizedTextObservation] else {
-                self.errorMessage = "No text found in the image"
-                return
-            }
-            
-            let recognizedText = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
-            DispatchQueue.main.async {
-                self.processedText = recognizedText
-                self.sendTextToAPI(text: recognizedText)
-            }
-        }
+    @MainActor
+    private func handleCapturedImage(_ image: NSImage) {
+        processedImage = image
+        isProcessing = false
+        notification.showCaptureSuccess()
         
-        request.recognitionLevel = .accurate
-        
-        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-        do {
-            try handler.perform([request])
-        } catch {
-            self.errorMessage = "OCR processing failed: \(error.localizedDescription)"
-        }
-    }
-    
-    func sendTextToAPI(text: String) {
-        guard let token = UserDefaults.standard.string(forKey: "authToken") else {
-            self.errorMessage = "Authentication token not found. Please log in."
-            return
-        }
-        
-        APIService.shared.processText(text, token: token, timezone: TimeZone.current.identifier) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let extractedInfo):
-                    self.apiResponse = extractedInfo
-                    WindowManager.shared.showPlanFormWindow(apiResponse: extractedInfo, screenshot: self.processedImage)
-                case .failure(let error):
-                    self.errorMessage = "API Error: \(error.localizedDescription)"
+        if autoSaveCaptures {
+            Task {
+                do {
+                    let metadata = CaptureMetadata(
+                        id: UUID(),
+                        title: "Screenshot \(Date())",
+                        timestamp: Date(),
+                        extractedText: processedText,
+                        plans: []
+                    )
+                    let url = try await storage.saveCapture(image, metadata: metadata)
+                    print("Screenshot saved to: \(url)")
+                } catch {
+                    handleError(error)
                 }
             }
         }
-    }
-    
-    func requestScreenCaptureAccess() {
-        Task {
-            do {
-                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-            } catch {
-                print("Failed to request screen capture access: \(error)")
+        
+        // OCR 처리
+        let request = VNRecognizeTextRequest { [weak self] request, error in
+            guard let self = self else { return }
+            if let error = error {
+                self.errorMessage = error.localizedDescription
+                return
+            }
+            
+            if let observations = request.results as? [VNRecognizedTextObservation] {
+                let recognizedText = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+                DispatchQueue.main.async {
+                    self.processedText = recognizedText
+                }
             }
         }
+        
+        if let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) {
+            try? VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+        }
     }
+    
+    @MainActor
+    private func handleError(_ error: Error) {
+        errorMessage = error.localizedDescription
+        isProcessing = false
+        notification.showError(error.localizedDescription)
+    }
+}
+
+// MARK: - Notification Names
+extension Notification.Name {
+    static let captureArea = Notification.Name("captureArea")
+    static let captureWindow = Notification.Name("captureWindow")
+    static let captureScreen = Notification.Name("captureScreen")
+    static let openPreferences = Notification.Name("openPreferences")
+    static let openRecentItem = Notification.Name("openRecentItem")
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleSignIn
 
 struct Plan: Identifiable {
     let id = UUID()
@@ -14,6 +15,8 @@ struct PlanFormView: View {
     let apiResponse: [String: Any]?
     let isLoading: Bool
     @Environment(\.presentationMode) var presentationMode
+    @State private var errorMessage: String?
+    @State private var showErrorAlert = false
     
     @State private var plans: [Plan] = []
     @State private var selectedPlan: Plan?
@@ -138,13 +141,29 @@ struct PlanEditView: View {
             
             HStack {
                 Button(action: {
-                    print("Add to Google Calendar button tapped")
+                    Task {
+                        do {
+                            let _ = try await GoogleCalendarService.shared.signIn()
+                            let event = try await GoogleCalendarService.shared.addEventToCalendar(plan: plan)
+                            NotificationManager.shared.showCalendarSuccessNotification()
+                            NotificationManager.shared.scheduleNotification(for: plan)
+                        } catch {
+                            NotificationManager.shared.showErrorNotification(message: error.localizedDescription)
+                        }
+                    }
                 }) {
                     Label("Add to Google Calendar", systemImage: "calendar.badge.plus")
                 }
                 .buttonStyle(.borderedProminent)
                 
                 Spacer()
+                
+                Button(action: {
+                    NotificationManager.shared.scheduleNotification(for: plan)
+                }) {
+                    Label("Set Reminder", systemImage: "bell")
+                }
+                .buttonStyle(.bordered)
                 
                 Button(action: {
                     print("Settings button tapped")
