@@ -5,6 +5,15 @@ import Carbon
 import AppKit
 import UserNotifications
 
+// 필요한 모듈들 import
+import "Models/Plan"
+import "Models/CaptureModels"
+import "Services/Services"
+import "Services/ScreenCaptureService"
+import "Services/NotificationService"
+import "Services/StorageService"
+import "Services/HotkeyService"
+
 // MARK: - Types
 enum ScreenshotType {
     case full, window, area
@@ -32,7 +41,7 @@ class ContentViewModel: NSObject, ObservableObject {
     private let screenCapture: ScreenCaptureService
     private let notification: NotificationService
     private let storage: StorageService
-    private let hotkey: HotkeyService
+    private let hotkey: HotkeyManager
     
     override init() {
         self.screenCapture = ScreenCaptureService.shared

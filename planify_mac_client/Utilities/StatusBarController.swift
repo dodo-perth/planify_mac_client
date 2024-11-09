@@ -88,24 +88,24 @@ class StatusBarController {
     }
     
     @objc private func captureArea() {
-        NotificationCenter.default.post(name: .captureArea, object: nil)
+        NotificationCenter.default.post(name: Notification.Name.captureArea, object: nil)
     }
     
     @objc private func captureWindow() {
-        NotificationCenter.default.post(name: .captureWindow, object: nil)
+        NotificationCenter.default.post(name: Notification.Name.captureWindow, object: nil)
     }
     
     @objc private func captureScreen() {
-        NotificationCenter.default.post(name: .captureScreen, object: nil)
+        NotificationCenter.default.post(name: Notification.Name.captureScreen, object: nil)
     }
     
     @objc private func openPreferences() {
-        NotificationCenter.default.post(name: .openPreferences, object: nil)
+        NotificationCenter.default.post(name: Notification.Name.openPreferences, object: nil)
     }
     
     @objc private func openRecentItem(_ sender: NSMenuItem) {
         guard let item = sender.representedObject as? CaptureItem else { return }
-        NotificationCenter.default.post(name: .openRecentItem, object: item)
+        NotificationCenter.default.post(name: Notification.Name.openRecentItem, object: item)
     }
     
     @objc private func clearRecentItems() {
@@ -121,13 +121,4 @@ struct CaptureItem: Identifiable {
     let date: Date
     let thumbnail: NSImage?
     let imageData: Data
-}
-
-// MARK: - Notification Names
-extension Notification.Name {
-    static let captureArea = Notification.Name("captureArea")
-    static let captureWindow = Notification.Name("captureWindow")
-    static let captureScreen = Notification.Name("captureScreen")
-    static let openPreferences = Notification.Name("openPreferences")
-    static let openRecentItem = Notification.Name("openRecentItem")
 }
